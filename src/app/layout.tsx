@@ -2,8 +2,8 @@ import './globals.css';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Your App Title',
-  description: 'Your app description here',
+  title: 'ChatBee',
+  description: 'chat application',
 };
 
 export default function RootLayout({

@@ -1,10 +1,10 @@
-import SignUp from "./SignUpForm";
+import SignUpForm from "./SignUpForm";
 
 
 export default function page() {
   return (
     <main>
-      <SignUp />
+      <SignUpForm />
     </main>
   );
 }
