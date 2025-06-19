@@ -1,11 +1,11 @@
-import React from 'react'
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/authOptions";
+import { redirect } from "next/navigation";
 
-function page() {
-  return (
-    <div>
-      <h1>Hellow world </h1>
-    </div>
-  )
+export default async function HomePage() {
+  const session = await getServerSession(authOptions);
+
+  if (session) redirect("/chat");
+  else redirect("/signin");
 }
 
-export default page
