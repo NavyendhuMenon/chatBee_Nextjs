@@ -12,14 +12,11 @@ export const authOptions: NextAuthOptions = {
         email: { label: "Email", type: "text" },
         password: { label: "Password", type: "password" },
       },
-      async authorize(
-        credentials
-      ): Promise<User | null> {
-        if (!credentials?.email || !credentials?.password) {
-          return null;
-        }
+      async authorize(credentials): Promise<User | null> {
+        if (!credentials?.email || !credentials?.password) return null;
 
         await connectDB();
+
         const user = await UserModel.findOne({ email: credentials.email });
 
         if (!user) return null;
@@ -27,20 +24,45 @@ export const authOptions: NextAuthOptions = {
         const isValid = await bcrypt.compare(credentials.password, user.password);
         if (!isValid) return null;
 
-        console.log(`User logged in successfully: ${user.email}`); 
+        console.log(`✅ User logged in successfully: ${user.email}`);
 
         return {
           id: user._id.toString(),
           name: user.name,
           email: user.email,
-           isAdmin: user.isAdmin,
+          isAdmin: user.isAdmin,
         };
       },
     }),
   ],
-  session: { strategy: "jwt" },
+
+  session: {
+    strategy: "jwt",
+  },
+
   secret: process.env.NEXTAUTH_SECRET,
+
   pages: {
-    signIn: "/login",
+    signIn: "/login", 
+  },
+
+  callbacks: {
+    // Store extra info in the JWT
+    async jwt({ token, user }) {
+      if (user) {
+        token.id = user.id;
+        token.isAdmin = user.isAdmin;
+      }
+      return token;
+    },
+
+    async session({ session, token }) {
+      if (token) {
+        session.user.id = token.id;
+        session.user.isAdmin = token.isAdmin;
+      }
+      return session;
+    },
   },
 };
+
