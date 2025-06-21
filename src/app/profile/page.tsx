@@ -1,5 +1,4 @@
 
-
 import ProfileModal from "@/components/ProfileModal";
 
 export default function Profile() {

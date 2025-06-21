@@ -6,6 +6,6 @@ export default async function HomePage() {
   const session = await getServerSession(authOptions);
 
   if (session) redirect("/chat");
-  else redirect("/signin");
+  else redirect("/auth/signin");
 }
 

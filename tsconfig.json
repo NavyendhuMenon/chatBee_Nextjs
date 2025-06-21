@@ -12,7 +12,7 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "preserve",
-    "types": ["react", "react-dom"], 
+    "types": ["react", "react-dom", "next-auth"],
     "incremental": true,
     "plugins": [
       {
