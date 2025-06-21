@@ -2,7 +2,7 @@
 
 import { GiBee } from "react-icons/gi";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import { JSX, useState } from "react";
+import { JSX, useState, useEffect } from "react";
 import { axiosForm } from "@/utils/axios";
 import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
@@ -22,6 +22,43 @@ export default function SignUp(): JSX.Element {
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState("");
 
+  // For live availability
+  const [nameAvailable, setNameAvailable] = useState<boolean | null>(null);
+  const [emailAvailable, setEmailAvailable] = useState<boolean | null>(null);
+
+  // Debounced check for name availability
+  useEffect(() => {
+    if (userData.name.trim() === "") {
+      setNameAvailable(null);
+      return;
+    }
+    const timer = setTimeout(async () => {
+      try {
+        const res = await axiosForm.get(`/api/signup/checkCredentials?name=${encodeURIComponent(userData.name)}`);
+        setNameAvailable(!res.data.exists);
+      } catch {
+        setNameAvailable(null);
+      }
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [userData.name]);
+
+  useEffect(() => {
+    if (userData.email.trim() === "") {
+      setEmailAvailable(null);
+      return;
+    }
+    const timer = setTimeout(async () => {
+      try {
+        const res = await axiosForm.get(`/api/signup/checkCredentials?email=${encodeURIComponent(userData.email)}`);
+        setEmailAvailable(!res.data.exists);
+      } catch {
+        setEmailAvailable(null);
+      }
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [userData.email]);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setUserData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
@@ -34,6 +71,16 @@ export default function SignUp(): JSX.Element {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Validate before submit
+    if (nameAvailable === false) {
+      setError("Username is already taken.");
+      return;
+    }
+    if (emailAvailable === false) {
+      setError("Email is already registered.");
+      return;
+    }
 
     setLoading(true);
     setError("");
@@ -55,12 +102,14 @@ export default function SignUp(): JSX.Element {
         setError(response.data?.message || "Failed to sign up");
         return;
       }
+      setSuccess(true);
+
+      // Auto login after successful signup
       const res = await signIn("credentials", {
-        redirect: false, // don't redirect automatically
+        redirect: false, // no auto redirect
         email: userData.email,
         password: userData.password,
       });
-
 
       if (res?.ok) {
         router.push("/"); 
@@ -113,6 +162,12 @@ export default function SignUp(): JSX.Element {
               placeholder="Enter your name"
               className="bg-gray-100 px-3 py-2 rounded-md border border-gray-300 focus:outline-none focus:border-[var(--color-primary)] focus:ring-2 focus:ring-[var(--color-primary)]"
             />
+            {nameAvailable === false && (
+              <p className="text-red-600 text-sm mt-1">Username is already taken</p>
+            )}
+            {nameAvailable === true && (
+              <p className="text-green-600 text-sm mt-1">Username is available</p>
+            )}
           </div>
 
           <div className="flex flex-col">
@@ -132,7 +187,14 @@ export default function SignUp(): JSX.Element {
               placeholder="Enter your email"
               className="bg-gray-100 px-3 py-2 rounded-md border border-gray-300 focus:outline-none focus:border-[var(--color-primary)] focus:ring-2 focus:ring-[var(--color-primary)]"
             />
+            {emailAvailable === false && (
+              <p className="text-red-600 text-sm mt-1">Email is already registered</p>
+            )}
+            {emailAvailable === true && (
+              <p className="text-green-600 text-sm mt-1">Email is available</p>
+            )}
           </div>
+
           <div className="flex flex-col relative">
             <label
               htmlFor="password"
@@ -150,8 +212,6 @@ export default function SignUp(): JSX.Element {
               placeholder="Enter your password"
               className="bg-gray-100 px-3 py-2 pr-10 rounded-md border border-gray-300 focus:outline-none focus:border-[var(--color-primary)] focus:ring-2 focus:ring-[var(--color-primary)]"
             />
-
-            {/* Eye Icon */}
             <span
               onClick={() => setShowPassword((prev) => !prev)}
               className="absolute right-3 top-10 cursor-pointer text-gray-600"
