@@ -1,7 +1,11 @@
 import "./globals.css";
 import type { Metadata } from "next";
 
-import Providers from "./providers";
+// import Providers from "./providers";
+
+import Providers from "./SessionProv";
+
+import { SessionProvider } from "next-auth/react";
 
 export const metadata: Metadata = {
   title: "ChatBee",
@@ -16,7 +20,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="bg-slate-200">
-        <Providers> {children} </Providers>
+        <Providers>{children}</Providers>{" "}
       </body>
     </html>
   );

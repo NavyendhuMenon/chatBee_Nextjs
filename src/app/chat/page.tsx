@@ -43,9 +43,7 @@ export default function ChatPage() {
       </Header>
 
       {/* Modal Overlay */}
-      {showProfile && <ProfileModal onClose={() => setShowProfile(false)} onLogout={function (): void {
-              throw new Error("Function not implemented.");
-          } } />}
+      {showProfile && <ProfileModal onClose={() => setShowProfile(false)} />}
     </>
   );
 }
