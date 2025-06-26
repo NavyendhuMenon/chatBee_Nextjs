@@ -1,9 +1,23 @@
 export interface PrivateMessagePayload {
-  to: string;
-  from: string;
+  sender: string;
+  receiver: string;
   message: string;
   chatId: string;
 }
+
+
+export interface Message {
+  _id: string;
+  from: string;
+  to: string;
+  chatId: string;
+  message: string;
+  delivered: boolean;
+  seen: boolean;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
 
 export interface GroupMessagePayload {
   roomId: string;
