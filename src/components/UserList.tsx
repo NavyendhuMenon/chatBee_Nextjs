@@ -12,7 +12,7 @@ export default function UserList() {
   const [search, setSearch] = useState("");
 
   return (
-    <div className="h-full bg-[var(--color-white)] text-black flex flex-col rounded-lg overflow-hidden shadow-md">
+    <div className="h-screen max-h-screen bg-[var(--color-white)] text-black flex flex-col rounded-lg overflow-hidden shadow-md">
       <div className="p-4 text-xl font-bold shadow-md bg-white">Chats</div>
 
       <div className="p-3">
@@ -24,13 +24,15 @@ export default function UserList() {
           className="w-full p-2 rounded-md text-black focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] hover:bg-yellow-100 focus:bg-yellow-100 transition-colors"
         />
       </div>
-
-      {isLoading && <p>Loading users...</p>}
-      {isError && <p>Failed to load users</p>}
-
       <div
-        className="overflow-y-auto flex-1 scrollbar-hide"
-        style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+        className="overflow-y-auto"
+        style={{
+          flexGrow: 1,
+          WebkitOverflowScrolling: "touch", 
+          scrollbarWidth: "none", 
+          msOverflowStyle: "none", 
+          height: "calc(100vh - 112px)", 
+        }}
       >
         {users
           .filter((user) =>
@@ -62,7 +64,8 @@ export default function UserList() {
       </div>
 
       <style jsx>{`
-        .scrollbar-hide::-webkit-scrollbar {
+        /* Hide scrollbar for WebKit browsers */
+        div::-webkit-scrollbar {
           display: none;
         }
       `}</style>

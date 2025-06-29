@@ -6,8 +6,8 @@
   :root {
     --color-primary: #ffc629; /* Primary color */
     --color-secondary: #6b4701; /* Secondary color */
-    --color-white : #ffff;
-     --color-black : black;
+    --color-white : #fff;
+    --color-black : black;
 
   }
   body {
